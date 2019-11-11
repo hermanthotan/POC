@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CCTV Control System</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack-extra.css">
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.0/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.jQueryUI.js"></script>
+    <script src="wheelzoom.js"></script>
+
+    <style type="text/css">
+        .grid-stack {
+            background: lightgoldenrodyellow;
+        }
+
+        .grid-stack-item-content {
+            color: #2c3e50;
+            text-align: center;
+            background-color: #18bc9c;
+        }
+
+        .deleteWidget {
+            position: absolute; 
+            background: white; 
+            left: 45%; 
+            width: 80px; 
+            text-align: center; 
+            font-weight: bold;
+        }
+    </style>
+    <script type="text/javascript">
+        var gridDatas = new Array();
+        var options = { float: true };
+        var refreshInterval = 2;
+
+        $(document).ready(function() {
+            // This code is for the resize
+            var waitForFinalEvent=function(){var b={};return function(c,d,a){a||(a="I am a banana!");b[a]&&clearTimeout(b[a]);b[a]=setTimeout(c,d)}}();
+            var fullDateString = new Date();
+            function isBreakpoint(alias) {
+                return $('.device-' + alias).is(':visible');
+            }
+
+            $('.grid-stack').gridstack(options);
+
+            // This is to fixed the resize issue
+            $('.grid-stack').on('gsresizestop', function(event, elem) {
+                var elemHtml = elem.innerHTML;
+                var start = elemHtml.indexOf('img id="');
+                var rest = elemHtml.substr(start + 8, elemHtml.length - (start + 8));
+                var end = rest.indexOf('" ');
+                var id = elemHtml.substr(start + 8, end);
+                var link = $('#' + id).attr('link');
+                $('#' + id).attr('src', link);
+            });
+
+            setInterval(function() {
+                var imgs = $('img');
+                for (var i = 0; i < imgs.length; i++) {
+                    var id = imgs[i].id;
+                    var link = $('#' + id).attr('link');
+
+                    $('#' + id).attr('src',link);
+                }
+            }, refreshInterval * 1000);
+
+            function refreshImgs()
+            {
+                var imgs = $('img');
+                for (var i = 0; i < imgs.length; i++) {
+                    var id = imgs[i].id;
+                    var link = $('#' + id).attr('link');
+
+                    $('#' + id).attr('src', link);
+                }
+            }
+
+            function resizeGrid() {
+                var grid = $('.grid-stack').data('gridstack');
+                if (isBreakpoint('xs')) {
+                    $('#grid-size').text('One column mode');
+                } else if (isBreakpoint('sm')) {
+                    grid.setGridWidth(3);
+                    $('#grid-size').text(3);
+                } else if (isBreakpoint('md')) {
+                    grid.setGridWidth(6);
+                    $('#grid-size').text(6);
+                } else if (isBreakpoint('lg')) {
+                    grid.setGridWidth(12);
+                    $('#grid-size').text(12);
+                }
+            };
+            $(window).resize(function () {
+                waitForFinalEvent(function() {
+                    resizeGrid();
+                }, 300, fullDateString.getTime());
+            });
+
+            new function () {
+                // HARD-CODED: Initialize GridDatas
+                gridDatas.push({ x: 0, y: 0, width: 4, height: 4, type: 'img', uri: "http://pub.cloudapp.net/CCTVS/001"});
+                gridDatas.push({ x: 4, y: 0, width: 4, height: 4, type: 'img', uri: "http://pub.cloudapp.net/CCTVS/002"});
+                gridDatas.push({ x: 8, y: 0, width: 4, height: 4, type: 'img', uri: "http://pub.cloudapp.net/CCTVS/003"});
+                gridDatas.push({ x: 0, y: 4, width: 4, height: 4, type: 'video', uri: "https://www.w3schools.com/html/mov_bbb.mp4"});
+                gridDatas.push({ x: 4, y: 4, width: 4, height: 4, type: 'video', uri: "https://www.w3schools.com/html/mov_bbb.mp4"});
+                gridDatas.push({ x: 8, y: 4, width: 4, height: 4, type: 'img', uri: "http://pub.cloudapp.net/CCTVS/006"});
+                gridDatas.push({ x: 0, y: 8, width: 4, height: 4, type: 'img', uri: "http://pub.cloudapp.net/CCTVS/007"});
+                gridDatas.push({ x: 4, y: 8, width: 4, height: 4, type: 'img', uri: "http://pub.cloudapp.net/CCTVS/008"});
+                gridDatas.push({ x: 8, y: 8, width: 4, height: 4, type: 'img', uri: "http://pub.cloudapp.net/CCTVS/009"});
+
+                loadGrid();
+
+                // Mouse Scroll the image and zoom
+                
+                wheelzoom(document.querySelectorAll("img"), { zoom: 0.05 });
+            };
+
+            function loadGrid()
+            {
+                var grid = $('.grid-stack').data('gridstack');
+                grid.removeAll();
+                var items = GridStackUI.Utils.sort(gridDatas);
+                    _.each(items, function (node, i) {
+                        var content = '';
+                        if (node.type === 'video')
+                        {
+                            content = '<div><div class="grid-stack-item-content" style="overflow-y: hidden;"><video style="min-width: 100%; min-height: 100%;" controls autoplay muted><source src="' + node.uri + '" type="video/mp4"></video></div><a id="grid-' + i + '" class="deleteWidget">DELETE</a></div>';
+                        }
+                        else if (node.type === 'img')
+                        {
+                            content = '<div><div class="grid-stack-item-content"><img id="grid-' + i + '" src="' + node.uri + '" link="' + node.uri + '" style="width:100%; height: 100%;" /></div><div><a id="grid-' + i + '" class="deleteWidget">DELETE</a></div></div>';
+                        }
+
+                        grid.addWidget(content,
+                            node.x, node.y, node.width, node.height);
+                    }, this);
+                    return false;
+                
+                resizeGrid();
+            }
+
+            $('#addWidget_pressed').click(function() {
+                console.log('add new widget in');
+                for (var y = 0; y < 10; y++)
+                {
+                    for (var x = 0; x < 3; x++)
+                    {
+                        var xVal = x * 4;
+                        var yVal = y * 4;
+
+                        var found = gridDatas.find(x => x.x == xVal && x.y == yVal);
+                        if (!found)
+                        {
+                            gridDatas.push({ x: xVal, y: yVal, width: 4, height: 4, type: 'img', uri: getImage(getRandomNumber()) });        
+                            loadGrid();
+                            return false;
+                        }
+                        // console.log('x: ' + xVal + ' y: ' + yVal);
+                    }
+                }
+            })
+
+            $('body').on('click','a.deleteWidget', function(e){
+                console.log('delete widget in');
+                var id = e.target.id;
+                var index = id.split('-')[1];
+
+                gridDatas.splice(index, 1);
+                loadGrid();
+                return false;
+            })
+
+            function getRandomNumber()
+            {
+                return Math.floor(Math.random() * 100);
+            }
+            function getImage(i)
+            {
+                var index = 0;
+                var uri = "http://pub.cloudapp.net/CCTVS/";
+                if (i > 0 & i < 10)
+                    return uri + "00" + i;
+                else if (i >= 10 & i < 100)
+                    return uri + "0" + i;
+                else if (i >= 100 & i < 1000)
+                    return uri + i;
+                else
+                    return "";
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="device-xs visible-xs"></div>
+    <div class="device-sm visible-sm"></div>
+    <div class="device-md visible-md"></div>
+    <div class="device-lg visible-lg"></div>
+    <div class="device-xl visible-xl"></div>
+    <div class="container-fluid">
+        <a id="addWidget_pressed">Add new widget</a>
+
+        <br/>
+        <br/>
+
+        <div class="grid-stack">
+        </div>
+    </div>
+
+
+    
+</body>
+</html>

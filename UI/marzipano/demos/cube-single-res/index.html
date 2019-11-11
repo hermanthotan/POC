@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Single Resolution Cube | Marzipano</title>
+<meta name="description" content="Display a single-resolution cubemap image." />
+<meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui" />
+<style>@-ms-viewport { width: device-width; }</style>
+<link rel="stylesheet" href="https://www.marzipano.net/demos/common/reset.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mhayes-twentytwenty/1.0.0/css/twentytwenty.css">
+
+<style>
+    .controller {
+        position: absolute;
+        bottom: 0;
+        background-color: lightblue;
+        width: 250px;
+        vertical-align: center;
+    }
+
+    #leftcontroller {
+        position: absolute;
+        right: 0;
+        background-color: lightblue;
+        width: 50px;
+        /* vertical-align: middle; */
+    }
+
+    .img-icon {
+        width: 40px;
+    }
+/* 
+    .icon {
+        width: 40px;
+        background-color: white;
+        
+    } */
+
+
+</style>
+
+</head>
+<body>
+
+    <!-- <div id="comparison">
+        <img src="img/img-original.jpg" />
+        <img src="img/img-original.jpg" />
+        <div id="pano1" class="pano"></div>
+        <div id="pano2" class="pano"></div>
+    </div> -->
+    
+<div id="pano1" class="pano"></div>
+<div id="controller1" class="controller">
+    <input type="date" id="date1" min="2019-10-18 00:00" max="2019-10-19 00:00">
+    <input type="time" id="time1">
+</div> 
+<!-- 
+<div id="pano2" class="pano"></div>
+<div id="controller2" class="controller">
+    <input type="date" id="date2" min="2019-10-18" max="2019-10-19">
+    <input type="time" id="time2">
+</div> -->
+
+<div id="leftcontroller">
+    <a class="icon" onclick="timelapse_clicked()" title="Timelapse">
+        <img src="img/timelapse.png" class="img-icon">
+    </a>
+    <a class="icon" onclick="comparison_clicked()" title="Compare">
+        <img src="img/compare.png" class="img-icon">
+    </a>
+    <a class="icon" onclick="imagedownload_clicked()" title="Download">
+        <img src="img/download.png" class="img-icon">
+    </a>
+</div>
+
+<script src="https:///www.marzipano.net/demos/common/es5-shim.js"></script>
+<script src="https://www.marzipano.net/demos/common/eventShim.js"></script>
+<script src="https://www.marzipano.net/demos/common/requestAnimationFrame.js" ></script>
+<!-- <script src="../../build/marzipano.js" ></script> -->
+
+<script src="https://www.marzipano.net/build/marzipano.js"></script>
+
+<!-- For the animation & Scroll-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mhayes-twentytwenty/1.0.0/js/jquery.event.move.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mhayes-twentytwenty/1.0.0/js/jquery.twentytwenty.js"></script>
+
+<!-- For the Download -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.2.2/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip-utils/0.1.0/jszip-utils.min.js"></script>
+<script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+
+<script src="transitionFunctions.js"></script>
+<script src="index.js"></script>
+
+<!-- <script>
+    $(document).ready(function() {
+        $('#comparison').twentytwenty();
+        $('.pano').css('position', 'none');
+        $('canvas').css('position', 'none');
+    })
+</script> -->
+
+</body>
+</html>
