@@ -2,7 +2,8 @@
 <html>
     <head>
         <title>Gridster JS</title>
-        <link rel="stylesheet" href="http://dsmorse.github.io/gridster.js/demos/assets/css/demo.css">
+        <link rel="stylesheet" href="demo.css">
+        <!-- <link rel="stylesheet" href="http://dsmorse.github.io/gridster.js/demos/assets/css/demo.css"> -->
         <link rel="stylesheet" href="jquery.gridster.css">
     
         <style type="text/css">
@@ -42,6 +43,19 @@
                 color: black;
                 padding-top: 4px;
             }
+            .presentmode {
+                padding-top: 4px;
+                width: 20px;
+                height: 20px;
+                position: absolute;
+                left: 0;
+                top: 50px;
+                display: float;
+                background-color: white;
+                z-index: 100;
+                color: black;
+                padding-top: 4px;
+            }
             .menu {
                 min-width: 100px;
                 position: fixed;
@@ -63,6 +77,12 @@
                 <li><a class="clickRange" start="25" end="48">25 - 48</a></li>
                 <li><a class="clickRange" start="49" end="72">49 - 72</a></li>
                 <li><a class="clickRange" start="73" end="96">73 - 96</a></li>
+                <li><a class="startPresentation">Start</a>
+                    <a class="stopPresentation">Stop</a>
+                </li>
+                <li>
+                    <a class="presentationRange" start="1" end="24">1 - 24</a>
+                </li>
             </ul>
         </div>
         <div class="gridster">
@@ -82,6 +102,8 @@
         var numberOfInitialCCTV = 15;
         $(document).ready(function() {
             $('#menu-list').hide();
+            $('.stopPresentation').hide();
+            $('.presentationRange').hide();
 
             $('#menu').click(function() {
                 $('#menu-list').toggle();
@@ -192,6 +214,20 @@
                 loadGrid();
                 applyWheelZoom();
             })
+
+            $('body').on('click', 'a.presentationRange', function(e) {
+                console.log('click presentation range in');
+                var target = e.target.outerHTML;
+                var start = propCut(target, 'start=');
+                var end = propCut(target, 'end=');
+                var type = "presentationRange";
+                console.log('start: ' + start + ' end: ' + end);
+
+                var json = JSON.stringify({ type, start, end });
+                console.log('JSON: ');
+                console.log(json);
+                presentationConnection.send(json);
+            });
 
             $('body').on('click', 'a.deleteWidget', function(e) {
                 console.log('delete widget in');
@@ -313,7 +349,8 @@
                 return `
 <a prop="` + getCCTVNumber(i) + `" class="deleteWidget">x</a>
 <a prop="` + getCCTVNumber(i) + `" class="sizeplus">+</a>
-<a prop="` + getCCTVNumber(i) + `" class="sizeminus">-</a>`;
+<a prop="` + getCCTVNumber(i) + `" class="sizeminus">-</a>
+<a prop="` + getCCTVNumber(i) + `" class="presentmode">P</a>`;
             }
             loadGrid();
             applyWheelZoom();
@@ -354,6 +391,80 @@
                 var cctvNumber = getCCTVNumber(i);
                 return uri + cctvNumber;
             }
+
+            var presentationRequest = new PresentationRequest(['https://www.suezcctv.com/presentation2.html']);
+            //http://www.suezcctv.com/presentation.html
+            navigator.presentation.defaultRequest = presentationRequest;
+
+            let presentationConnection;
+
+            $('body').on('click', 'a.startPresentation', function(e) {
+                if (presentationConnection == undefined)
+                {
+                    presentationRequest.start()
+                                       .then(connection => {
+                                           console.log('> connected to ' + connection.url + ', id: ' + connection.id);
+                                           $('.startPresentation').hide();
+                                           $('.stopPresentation').show();
+                                           $('.presentationRange').show();
+                                       }) 
+                                       .catch(error => {
+                                           console.log('> ' + error.name + ': ' + error.message);
+                                       });
+                }
+            });
+
+            $('body').on('click', 'a.stopPresentation', function(e) {
+                if (presentationConnection != undefined) {
+                    presentationConnection.close();
+                    console.log('closing connection....');
+                    $('.startPresentation').show();
+                    $('.stopPresentation').hide();
+                    $('.presentationRange').hide();             
+                }
+            });
+
+            $('body').on('click', 'a.presentmode', function (e) {
+                var target = e.target.outerHTML;
+                var targetproperty = propCut(target, 'prop=');
+                var message = "http://pub.cloudapp.net/CCTVS/" + targetproperty;
+                const lang = 'en-US';
+                console.log('target: ' + target);
+                console.log('property: ' + targetproperty);
+                console.log('uri: ' + message);
+                var type = "presentationSingle";
+
+                var json = JSON.stringify({
+                    type: type,
+                    message
+                });
+                console.log(json);
+                presentationConnection.send(json);
+            });
+
+            presentationRequest.addEventListener('connectionavailable', function(event) {
+                presentationConnection = event.connection;
+                presentationConnection.addEventListener('close', function() {
+                    console.log('> Connection closed.');
+                });
+                presentationConnection.addEventListener('terminate', function() {
+                    console.log('> Connection terminated.');
+                });
+                presentationConnection.addEventListener('message', function(event) {
+                    console.log('> ' + event.data);
+                });
+            });
+
+            presentationRequest.getAvailability()
+                               .then(availability => {
+                                   console.log('Available presentation displays: ' + availability.value);
+                                   availability.addEventListener('change', function() {
+                                        console.log('> Availability presentation displays: ' + availability.value);
+                                   });
+                               })
+                               .catch(error => {
+                                   console.log('Presentation availability not supported, ' + error.name + ':' + error.message);
+                               })
         })
     </script>
 </html>

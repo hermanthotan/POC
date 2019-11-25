@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>CCTV Launch Range</title>
+    <link rel="stylesheet" href="demo.css">
+    <link rel="stylesheet" href="jquery.gridster.css">
+    <style type="text/css">
+      html, body {
+        height: 100%;
+        margin: 0;
+        font-family: sans-serif;
+        background: radial-gradient(ellipse at center, #333333 0%,#000000 100%);
+        color: #fff;
+      }
+      #main {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        font-size: 54px;
+        width: 100%;
+      }
+      .deleteWidget {
+                width: 20px;
+                height: 20px;
+                position: absolute;
+                right: 0;
+                top: 0;
+                display: float;
+                background-color: white;
+                z-index: 100;
+                color: black;
+                padding-top: 4px;
+            }
+            .sizeplus {
+                width: 20px;
+                height: 20px;
+                position: absolute;
+                left: 0;
+                display: float;
+                background-color: white;
+                z-index: 100;
+                color: black;
+                padding-top: 4px;
+            }
+            .sizeminus {
+                padding-top: 4px;
+                width: 20px;
+                height: 20px;
+                position: absolute;
+                left: 0;
+                top: 25px;
+                display: float;
+                background-color: white;
+                z-index: 100;
+                color: black;
+                padding-top: 4px;
+            }
+            .menu {
+                min-width: 100px;
+                position: fixed;
+                top: 0;
+                z-index: 20;
+                color: black;
+                text-align: center;
+            }
+    </style>
+  </head>
+  <body>
+    <div id="main"></div>
+    <ul id="message-list" style="display: block;">
+    </ul>
+    <div class="gridster">
+      <ul style="min-width: 100%; max-width: 100%; padding: 0px;"></ul>
+    </div>
+  </body>
+
+  <!-- For the animatioon & scroll -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+  <script src="jquery.gridster.js"></script>
+  <script src="wheelzoom.js"></script>
+  <script type="text/javascript" src="receiver2.js"></script>
+</html>
